@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Download</title>
+
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
+    <script src="{%  static 'js/jquery-3.1.1.min.js' %}" ></script>
+    <script src="{%  static 'js/bootstrap.min.js' %}" ></script>
+</head>
+<body>
+
+    <table class="table table-bordered">
+        <tr>
+            <th style="text-align:center">歌单名称</th>
+            <th style="text-align:center">歌曲名称</th>
+            <th style="text-align:center">歌曲链接</th>
+        </tr>
+
+        {% for mc in msc %}
+            <tr>
+                <td align="center">{{ mc.playlist }}</td>
+                <td align="center">{{ mc.Musicname }}</td>
+                <td align="center"><a target="_blank" href="{{ mc.url }}">试听/下载</a>></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

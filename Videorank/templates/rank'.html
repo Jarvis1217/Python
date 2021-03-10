@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>video rank</title>
+</head>
+<body>
+
+
+    <table border="1">
+        <tr>
+            <th style="text-align:center">排名</th>
+            <th style="text-align:center">标题</th>
+            <th style="text-align:center">评分</th>
+            <th style="text-align:center">链接</th>
+        </tr>
+
+        {% for v in vi %}
+            <tr>
+                <td align="center">{{ v.rank }}</td>
+                <td align="center">{{ v.title }}</td>
+                <td align="center">{{ v.url }}</td>
+                <td align="center"><a target="_blank" href="{{ v.url }}"></a>></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

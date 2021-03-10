@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="../static/Register.css"/>
+    <style>
+        .tip{
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="register">
+        <h1>Register</h1>
+        <form method="post" action="/Register">
+            <input type="text" required="required" placeholder="用户名" name="userName"/>
+            <input type="password" required="required" placeholder="密码" name="userPass"/>
+            <input type="password" required="required" placeholder="确认密码" name="againPass"/>
+            <button class="sub" type="submit">注册</button>
+             <p class="tip">已有账号?<a href="/Login" class="tip">点击登录</a>
+        </form>
+    </div>
+
+    {% for message in get_flashed_messages() %}
+        <script>alert("{{ message }}")</script>
+    {% endfor %}
+
+</body>
+</html>

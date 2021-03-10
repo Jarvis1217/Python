@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="../static/Login.css"/>
+    <style>
+        .tip{
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login">
+        <h1>Login</h1>
+        <form method="post" action="/Login">
+            <input type="text" required="required" placeholder="用户名" name="userName"/>
+            <input type="password" required="required" placeholder="密码" name="userPass"/>
+            <button class="sub" type="submit">登录</button>
+            <p class="tip">没有账号?<a href="/Register" class="tip">点击注册</a>
+        </form>
+    </div>
+
+     {% for message in get_flashed_messages() %}
+        <script>alert("{{ message }}")</script>
+    {% endfor %}
+
+</body>
+</html>

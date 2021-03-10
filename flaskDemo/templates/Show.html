@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap.min.css">
+    <script src="../static/bootstrap.js"></script>
+    <script src="../static/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <table class="table table-striped">
+        <tr>
+            <th style="text-align:center">识别号</th>
+            <th style="text-align:center">书名</th>
+            <th style="text-align:center">简介</th>
+            <th style="text-align:center">价格</th>
+            <th style="text-align:center">存量</th>
+            <th style="text-align:center">购买</th>
+        </tr>
+
+        {% for data in datas %}
+        <tr>
+            <td align="center">{{ data.id }}</td>
+            <td align="center">{{ data.bookName }}</td>
+            <td align="center">{{ data.bookIntro }}</td>
+            <td align="center">{{ data.bookPrice }}</td>
+            <td align="center">{{ data.bookStock }}</td>
+            <td align="center"><a target="_self" href="/Buy">购买</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
