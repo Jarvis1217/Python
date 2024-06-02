@@ -54,7 +54,7 @@ def generate_maze(width, height):
     return maze
 
 # 生成一个5x5的迷宫
-width, height = 30, 30
+width, height = 5, 5
 maze = generate_maze(width, height)
 
 # 打印迷宫数组
