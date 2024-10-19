@@ -12,9 +12,19 @@ while True:
     # 发起请求
     response = client.chat.completions.create(
         model="deepseek-chat",
-        messages = messages
+        messages = messages,
+        stream = True
     )
 
+    # 流式输出处理
+    collected_messages = []
+    for chunk in response:
+        content = chunk.choices[0].delta.content
+        if content:
+            print(content, end='', flush=True)  # 实时打印消息
+            collected_messages.append(content)  # 收集完整消息
+
     # 多轮对话
-    messages.append(response.choices[0].message)
-    print(f"\n {messages[-1].content} \n")
+    full_response = ''.join(collected_messages)
+    messages.append({"role": "assistant", "content": full_response})
+    print()
