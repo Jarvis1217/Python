@@ -27,4 +27,4 @@ while True:
     # 多轮对话
     full_response = ''.join(collected_messages)
     messages.append({"role": "assistant", "content": full_response})
-    print()
+    print("\n")
