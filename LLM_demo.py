@@ -7,6 +7,9 @@ messages = [{"role": "system", "content": "你是一名专业的python程序员�
 while True:
     que = input(">>> ")
 
+    if que == "q":
+        break
+
     messages.append({"role": "user", "content": que})
 
     # 发起请求
