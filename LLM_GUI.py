@@ -112,6 +112,17 @@ def on_key_press(event):
 
 user_input.bind('<KeyPress>', on_key_press)
 
+# 选中复制
+def on_select(event):
+    try:
+        root.clipboard_clear()
+        text = message_display.get("sel.first", "sel.last")
+        root.clipboard_append(text)
+    except tk.TclError:
+        pass
+
+message_display.bind("<ButtonRelease-1>", on_select)
+
 # 关闭窗口时销毁线程
 def on_closing():
     stop_thread.set()
