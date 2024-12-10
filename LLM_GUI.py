@@ -35,11 +35,12 @@ user_input = tk.Text(bottom_frame, height=8)
 user_input.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
 # 插入提示词模板
-prompt_template = """角色：你是专业的提示词工程师。
+prompt_template = """
+角色：你是专业的提示词工程师。
 任务：根据以下描述，生成一个优化的提示词，以确保 AI 模型提供准确和详细的回答。
 描述：
 """
-user_input.insert("1.0", prompt_template)
+user_input.insert("1.0", prompt_template.strip())
 
 # 更新文本框
 def update_text_widget():
