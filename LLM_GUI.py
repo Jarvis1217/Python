@@ -34,6 +34,13 @@ bottom_frame.pack(fill=tk.X, padx=10, pady=10)
 user_input = tk.Text(bottom_frame, height=8)
 user_input.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
+# 插入提示词模板
+prompt_template = """角色：你是专业的提示词工程师。
+任务：根据以下描述，生成一个优化的提示词，以确保 AI 模型提供准确和详细的回答。
+描述：
+"""
+user_input.insert("1.0", prompt_template)
+
 # 更新文本框
 def update_text_widget():
     try:
@@ -49,21 +56,6 @@ def update_text_widget():
         root.after(100, update_text_widget)
     except queue.Empty:
         root.after(100, update_text_widget)
-
-# 发送消息
-def send_message(event):
-    user_message = user_input.get('1.0', tk.END).strip()
-    if user_message != '':
-        message_display.config(state=tk.NORMAL)
-        message_display.insert(tk.END, "\n", "user")
-        message_display.insert(tk.END, user_message + "\n\n", "user")
-        message_display.see(tk.END)
-        user_input.delete('1.0', tk.END)
-
-        # AI回复
-        thread = threading.Thread(target=get_response, args=(user_message,))
-        thread.start()
-        update_text_widget()
 
 # 获取AI回复
 def get_response(user_msg):
@@ -91,6 +83,21 @@ def get_response(user_msg):
         # 多轮对话
         full_response = ''.join(collected_messages)
         messages.append({"role": "assistant", "content": full_response})
+
+# 发送消息
+def send_message(event):
+    user_message = user_input.get('1.0', tk.END).strip()
+    if user_message != '':
+        message_display.config(state=tk.NORMAL)
+        message_display.insert(tk.END, "\n", "user")
+        message_display.insert(tk.END, user_message + "\n\n", "user")
+        message_display.see(tk.END)
+        user_input.delete('1.0', tk.END)
+
+        # AI回复
+        thread = threading.Thread(target=get_response, args=(user_message,))
+        thread.start()
+        update_text_widget()
 
 # 按键处理
 def on_key_press(event):
