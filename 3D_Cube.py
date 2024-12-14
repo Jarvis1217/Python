@@ -28,20 +28,20 @@ angle_x, angle_y = 0, 0
 
 # 3D 点投影
 def project(point):
-    fov = 500
-    distance = 5
+    fov = 500 # 视场角
+    distance = 5 # 投影距离
     factor = fov / (distance + point[2])
     x = int(point[0] * factor + WIDTH // 2)
     y = int(-point[1] * factor + HEIGHT // 2)
     return (x, y)
 
-# 绕 X 轴旋转点
+# 绕 X 轴旋转
 def rotate_x(point, angle):
     y = point[1] * math.cos(angle) - point[2] * math.sin(angle)
     z = point[1] * math.sin(angle) + point[2] * math.cos(angle)
     return [point[0], y, z]
 
-# 绕 Y 轴旋转点
+# 绕 Y 轴旋转
 def rotate_y(point, angle):
     x = point[2] * math.sin(angle) + point[0] * math.cos(angle)
     z = point[2] * math.cos(angle) - point[0] * math.sin(angle)
