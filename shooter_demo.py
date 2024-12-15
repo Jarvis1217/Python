@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 # 初始化
 pygame.init()
@@ -7,6 +8,7 @@ pygame.init()
 # 定义颜色
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
@@ -30,13 +32,19 @@ bullets = []
 bullet_radius = 5
 bullet_speed = 7
 
-# 定义网格间距
-grid_size = 50
+# 定义敌人属性
+enemies = []
+enemy_width = 30
+enemy_height = 50
+enemy_speed = 3
+spawn_delay = 90  # 每隔 90 帧生成一个敌人
+spawn_timer = 0
 
 # 游戏循环
 clock = pygame.time.Clock()
 
 def draw_grid():
+    grid_size = 50
     for x in range(0, WINDOW_WIDTH, grid_size):
         pygame.draw.line(screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
     for y in range(0, WINDOW_HEIGHT, grid_size):
@@ -54,31 +62,60 @@ def move_hero(keys_pressed):
         hero_x += hero_speed
 
 def handle_bullets():
-    global bullets
-    # 更新子弹位置
+    global bullets, enemies
     for bullet in bullets[:]:
         bullet[0] += bullet_speed
         if bullet[0] > WINDOW_WIDTH:
             bullets.remove(bullet)
 
+        # 检测子弹是否击中敌人
+        for enemy in enemies[:]:
+            if enemy['x'] < bullet[0] < enemy['x'] + enemy_width and \
+                    enemy['y'] < bullet[1] < enemy['y'] + enemy_height:
+                bullets.remove(bullet)
+                enemy['health'] -= 1
+                if enemy['health'] <= 0:
+                    enemies.remove(enemy)
+                break
+
+def spawn_enemy():
+    global spawn_timer
+    spawn_timer += 1
+    if spawn_timer >= spawn_delay:
+        spawn_timer = 0
+        enemy_y = random.randint(0, WINDOW_HEIGHT - enemy_height)
+        enemy_health = random.randint(1, 5)
+        enemies.append({'x': WINDOW_WIDTH, 'y': enemy_y, 'health': enemy_health})
+
+def move_enemies():
+    global enemies
+    for enemy in enemies[:]:
+        enemy['x'] -= enemy_speed
+        if enemy['x'] + enemy_width < 0:  # 敌人移出屏幕
+            enemies.remove(enemy)
 
 # 主游戏循环
 running = True
 while running:
     screen.fill(BLACK)
     draw_grid()
-    
+
     # 处理事件
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # 鼠标左键
-            # mouse_x, mouse_y = pygame.mouse.get_pos()
             bullets.append([hero_x + hero_width, hero_y + hero_height // 2])
 
     # 处理英雄移动
     keys_pressed = pygame.key.get_pressed()
     move_hero(keys_pressed)
+
+    # 生成敌人
+    spawn_enemy()
+
+    # 移动敌人
+    move_enemies()
 
     # 处理子弹
     handle_bullets()
@@ -89,6 +126,14 @@ while running:
     # 绘制子弹
     for bullet in bullets:
         pygame.draw.circle(screen, YELLOW, bullet, bullet_radius)
+
+    # 绘制敌人
+    for enemy in enemies:
+        pygame.draw.rect(screen, RED, (enemy['x'], enemy['y'], enemy_width, enemy_height))
+        # 显示血量
+        font = pygame.font.Font(None, 24)
+        health_text = font.render(str(enemy['health']), True, WHITE)
+        screen.blit(health_text, (enemy['x'] + enemy_width // 3, enemy['y'] + enemy_height // 3))
 
     # 更新屏幕
     pygame.display.flip()
