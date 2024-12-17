@@ -34,13 +34,6 @@ bottom_frame.pack(fill=tk.X, padx=10, pady=10)
 user_input = tk.Text(bottom_frame, height=8)
 user_input.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-# 插入提示词模板
-prompt_template = """
-角色：你是专业的提示词工程师。
-任务：根据以下描述，生成一个优化的提示词，以确保大语言模型提供准确和详细的回答。生成的提示词请用三个反引号（```）包裹。
-描述：
-"""
-user_input.insert("1.0", prompt_template.strip())
 
 # 更新文本框
 def update_text_widget():
