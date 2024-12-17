@@ -2,7 +2,7 @@ import re
 from textwrap import dedent
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-d11ea822a7cd4d0abb05f0a3632dc62c", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="<API-Key>", base_url="https://api.deepseek.com")
 messages = [{"role": "system", "content": "用中文回答。"}]
 
 
