@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
         # 展示 prompt 优化结果
         prompt = optimize_prompt(prompt)
-        print(f"\n[OPTIMIZED PROMPT]:\n{prompt}\n[LLM_RESPONSE]:")
+        print(f"\n[OPTIMIZED PROMPT]:\n\n{prompt}\n\n[LLM_RESPONSE]:\n")
 
         # 展示 LLM 回复
         messages.append({"role": "user", "content": prompt})
