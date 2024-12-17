@@ -46,18 +46,46 @@ def get_response():
     messages.append({"role": "assistant", "content": full_response})
 
 
+# 保存对话记录
+def save_messages(file_name):
+    file_name = file_name + ".md"
+
+    md_content = ""
+    for message in messages[1:]:
+        role = message.get("role").capitalize()
+        content = message.get("content", "")
+        md_content += f"**{role}:**\n\n{content}\n\n---\n\n"
+
+    with open(file_name, "w", encoding="utf-8") as file:
+        file.write(md_content)
+
+    print(f'\n已保存为：{file_name} \n')
+
+
 if __name__ == '__main__':
     while True:
-        prompt = input(">>> ")
+        prompt = input("\033[32m>>>\033[0m ")
 
-        if prompt == "q":
+        if prompt == "exit":
             break
+        if prompt == "help":
+            help_prompt = """
+            1.optimize {prompt} - 优化提示词
+            2.save {file_name} - 保存对话记录为md文件
+            3.help - 帮助信息
+            4.exit - 退出
+            """
+            print("\n" + dedent(help_prompt).strip() + "\n")
+            continue
+        if prompt.startswith("save "):
+            save_messages(prompt.replace("save ", ""))
+            continue
+        if prompt.startswith("optimize "):
+            prompt = optimize_prompt(prompt.replace("optimize ", ""))
+            print(f"\n\033[34m[OPTIMIZED PROMPT]:\033[0m\n\n{prompt}\n\n\033[34m[LLM_RESPONSE]:\033[0m\n")
+        else:
+            print(f"\n\033[34m[LLM_RESPONSE]:\033[0m\n")
 
-        # 展示 prompt 优化结果
-        prompt = optimize_prompt(prompt)
-        print(f"\n[OPTIMIZED PROMPT]:\n\n{prompt}\n\n[LLM_RESPONSE]:\n")
-
-        # 展示 LLM 回复
         messages.append({"role": "user", "content": prompt})
         get_response()
         print("\n")
