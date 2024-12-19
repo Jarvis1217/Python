@@ -20,7 +20,6 @@ def optimize_prompt(user_prompt):
 
     pattern = r'```.*?```'
     matches = re.findall(pattern, response.choices[0].message.content, re.DOTALL)
-    matches[0].strip("```").strip()
 
     return matches[0].strip("```").strip()
 
