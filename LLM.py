@@ -2,7 +2,7 @@ import re
 from textwrap import dedent
 from openai import OpenAI
 
-client = OpenAI(api_key="<API-Key>", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="<API-Key>", base_url="http://localhost:11434/v1/")
 messages = [{"role": "system", "content": "用中文回答。"}]
 
 
@@ -16,7 +16,7 @@ def optimize_prompt(user_prompt):
 
     user_prompt = dedent(prompt_template).strip() + user_prompt
     temp_messages = [{"role": "system", "content": "用中文回答。"}, {"role": "user", "content": user_prompt}]
-    response = client.chat.completions.create(model="deepseek-chat", messages=temp_messages)
+    response = client.chat.completions.create(model="qwen2.5:14b", messages=temp_messages)
 
     pattern = r'```.*?```'
     matches = re.findall(pattern, response.choices[0].message.content, re.DOTALL)
@@ -28,7 +28,7 @@ def optimize_prompt(user_prompt):
 # 获取 LLM 回复
 def get_response():
     response = client.chat.completions.create(
-        model="deepseek-chat",
+        model="qwen2.5:14b",
         messages=messages,
         stream=True
     )
@@ -70,10 +70,11 @@ if __name__ == '__main__':
             break
         if prompt == "help":
             help_prompt = """
-            1.optimize {prompt} - 优化提示词
-            2.save {file_name} - 保存对话记录为md文件
-            3.help - 帮助信息
-            4.exit - 退出
+            1.optimize {prompt} - 仅优化提示词
+            1.# {prompt}        - 优化提示词后发起会话
+            2.save {file_name}  - 保存对话记录为md文件
+            3.help              - 帮助信息
+            4.exit              - 退出
             """
             print("\n" + dedent(help_prompt).strip() + "\n")
             continue
@@ -82,6 +83,10 @@ if __name__ == '__main__':
             continue
         if prompt.startswith("optimize "):
             prompt = optimize_prompt(prompt.replace("optimize ", ""))
+            print(f"\n\033[34m[OPTIMIZED PROMPT]:\033[0m\n\n{prompt}\n")
+            continue
+        if prompt.startswith("# "):
+            prompt = optimize_prompt(prompt.replace("# ", ""))
             print(f"\n\033[34m[OPTIMIZED PROMPT]:\033[0m\n\n{prompt}\n\n\033[34m[LLM_RESPONSE]:\033[0m\n")
         else:
             print(f"\n\033[34m[LLM_RESPONSE]:\033[0m\n")
