@@ -2,7 +2,8 @@ import re
 from textwrap import dedent
 from openai import OpenAI
 
-client = OpenAI(api_key="<API-Key>", base_url="http://localhost:11434/v1/")
+client = OpenAI(api_key="qwen", base_url="http://localhost:11434/v1/")
+model = "qwen2.5:14b"
 messages = [{"role": "system", "content": "用中文回答。"}]
 
 
@@ -16,7 +17,7 @@ def optimize_prompt(user_prompt):
 
     user_prompt = dedent(prompt_template).strip() + user_prompt
     temp_messages = [{"role": "system", "content": "用中文回答。"}, {"role": "user", "content": user_prompt}]
-    response = client.chat.completions.create(model="qwen2.5:14b", messages=temp_messages)
+    response = client.chat.completions.create(model=model, messages=temp_messages)
 
     pattern = r'```.*?```'
     matches = re.findall(pattern, response.choices[0].message.content, re.DOTALL)
@@ -27,7 +28,7 @@ def optimize_prompt(user_prompt):
 # 获取 LLM 回复
 def get_response():
     response = client.chat.completions.create(
-        model="qwen2.5:14b",
+        model=model,
         messages=messages,
         stream=True
     )
