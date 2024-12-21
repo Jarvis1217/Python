@@ -2,8 +2,8 @@ import re
 from textwrap import dedent
 from openai import OpenAI
 
-client = OpenAI(api_key="qwen", base_url="http://localhost:11434/v1/")
 model = "qwen2.5:14b"
+client = OpenAI(api_key="qwen", base_url="http://localhost:11434/v1/")
 messages = [{"role": "system", "content": "用中文回答。"}]
 
 
