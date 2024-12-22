@@ -9,7 +9,7 @@ class GoogleSearchSpider(scrapy.Spider):
     def __init__(self, query=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.query = query
-        self.base_url = "https://www.nvtav.asia/search"
+        self.base_url = "https://www.google.com/search"
         self.results = []
 
     def start_requests(self):
