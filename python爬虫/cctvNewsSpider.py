@@ -1,23 +1,20 @@
 import time
 from lxml import etree
 from selenium import webdriver
-# 实现无可视化界面
 from selenium.webdriver.chrome.options import Options
-# 实现规避检测
 from selenium.webdriver import ChromeOptions
 
 url = "https://news.cctv.com/"
 
-# 实现无可视化界面的操作
+# 无可视化界面
 chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
 
-# 实现规避检测
+# 规避检测
 option = ChromeOptions()
 option.add_experimental_option('excludeSwitches', ['enable-automation'])
 
-# 如何实现让selenium规避被检测到的风险
 bro = webdriver.Chrome()
 bro.get('https://jingji.cctv.com/')
 x = int(input('请输入需要爬取的页数:'))
