@@ -21,6 +21,7 @@ def deal_cards(deck, num):
     del deck[-num:]
     return dealt_cards
 
+
 deck = generate_shuffled_deck()
 
 computer = deal_cards(deck,2)
