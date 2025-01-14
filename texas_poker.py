@@ -41,5 +41,5 @@ print(f"河牌: {','.join(community[:5])}")
 
 input()
 print(f"您的手牌是  : {','.join(player)}")
-print(f"电脑的手牌是: {','.join(computer)}")
+print(f"电脑手牌是  : {','.join(computer)}")
 print(f"公共牌是    : {','.join(community)}")
