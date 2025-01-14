@@ -30,16 +30,20 @@ community  = deal_cards(deck,5)
 
 print(f"您的手牌是: {','.join(player)}")
 
-input()
-print(f"翻牌: {','.join(community[:3])}")
+choice = input()
+if choice == 'f':
+    pass
+else:
+    print(f"翻牌: {','.join(community[:3])}")
 
-input()
-print(f"转牌: {','.join(community[:4])}")
+    input()
+    print(f"转牌: {','.join(community[:4])}")
 
-input()
-print(f"河牌: {','.join(community[:5])}")
+    input()
+    print(f"河牌: {','.join(community[:5])}")
 
-input()
-print(f"您的手牌是  : {','.join(player)}")
-print(f"电脑手牌是  : {','.join(computer)}")
-print(f"公共牌是    : {','.join(community)}")
+    input()
+    print(f"您的手牌是  : {','.join(player)}")
+    print(f"电脑手牌是  : {','.join(computer)}")
+    print(f"公共牌是    : {','.join(community)}")
+    
