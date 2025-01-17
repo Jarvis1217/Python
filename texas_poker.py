@@ -30,7 +30,7 @@ community  = deal_cards(deck,5)
 print(f"公共牌是: {','.join(community)}")
 
 input()
-print(f"电脑手牌是: {','.join(computer)}")
+print(f"您的手牌是: {','.join(player)}")
 
 input()
-print(f"您的手牌是: {','.join(player)}")
+print(f"电脑手牌是: {','.join(computer)}")
