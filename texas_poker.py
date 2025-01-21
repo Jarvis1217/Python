@@ -27,6 +27,7 @@ computer = deal_cards(deck,2)
 player = deal_cards(deck,2)
 community  = deal_cards(deck,5)
 
+print(f"电脑手牌是: {','.join(computer)}")
 print(f"您的手牌是: {','.join(player)}")
 
 input()
@@ -37,6 +38,3 @@ print(f"转牌: {','.join(community[:4])}")
 
 input()
 print(f"河牌: {','.join(community[:5])}")
-
-input()
-print(f"电脑手牌是: {','.join(computer)}")
