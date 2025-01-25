@@ -1,40 +1,77 @@
+import tkinter as tk
 import random
-import time
 
-# 生成乱序牌组
-def generate_shuffled_deck():
-    suits = ['♤', '♡', '♧', '♢']
-    ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+# 初始化扑克牌
+suits = ['♠', '♥', '♣', '♦']
+ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
-    deck = [rank + suit for suit in suits for rank in ranks]
+deck = [(rank, suit) for suit in suits for rank in ranks]
 
-    random.shuffle(deck)
+random.shuffle(deck)
 
-    return deck
+# 初始化Tk窗口
+root = tk.Tk()
+root.title("Texas poker")
+root.configure(bg="green")
+root.resizable(False, False)
 
-# 发牌
-def deal_cards(deck, num):
-    if num > len(deck):
-        raise ValueError("没有足够的牌!")
-    
-    dealt_cards = deck[-num:]
-    del deck[-num:]
-    return dealt_cards
+rows = 3
+cols = 5
 
-deck = generate_shuffled_deck()
+# 发手牌
+for row in [0, 2]:
+    for col in range(2):
+        card_label = tk.Label(root, width=8, height=6, relief="solid", anchor="nw")
+        card_label.grid(row=row, column=col, padx=10, pady=20)
 
-computer = deal_cards(deck,2)
-player = deal_cards(deck,2)
-community  = deal_cards(deck,5)
+        rank, suit = deck.pop()
 
-print(f"电脑手牌是: {','.join(computer)}")
-print(f"您的手牌是: {','.join(player)}")
+        card_label.config(
+            text=f"{rank}",
+            font=("Arial", 10),
+            justify="left"
+        )
 
-input()
-print(f"翻牌: {','.join(community[:3])}")
+        suit_color = "red" if suit in ["♥", "♦"] else "black"
+        suit_label = tk.Label(card_label, text=suit, font=("Arial", 24), fg=suit_color)
+        suit_label.place(relx=0.5, rely=0.5, anchor="center")
 
-input()
-print(f"转牌: {','.join(community[:4])}")
+# 处理公共牌
+community_cards = []
+current_step = 0
 
-input()
-print(f"河牌: {','.join(community[:5])}")
+for col in range(cols):
+    card_label = tk.Label(root, width=8, height=6, relief="solid", anchor="nw")
+    card_label.grid(row=1, column=col, padx=10, pady=10)
+    community_cards.append(card_label)
+    card_label.grid_remove()  # 初始隐藏
+
+    rank, suit = deck.pop()
+
+    card_label.config(
+        text=f"{rank}",
+        font=("Arial", 10),
+        justify="left"
+    )
+
+    suit_color = "red" if suit in ["♥", "♦"] else "black"
+    suit_label = tk.Label(card_label, text=suit, font=("Arial", 24), fg=suit_color)      
+    suit_label.place(relx=0.5, rely=0.5, anchor="center")
+
+# 绑定回车事件
+def handle_key(event):
+    global current_step
+    if current_step == 0:
+        for i in range(3):
+            community_cards[i].grid()
+        current_step += 1
+    elif current_step == 1:
+        community_cards[3].grid()
+        current_step += 1
+    elif current_step == 2:
+        community_cards[4].grid()
+        current_step += 1
+
+root.bind('<Return>', handle_key)
+
+root.mainloop()
