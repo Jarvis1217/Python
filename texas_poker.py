@@ -11,6 +11,7 @@ player = [deck.pop() for _ in range(2)]
 computer = [deck.pop() for _ in range(2)]
 community = [deck.pop() for _ in range(5)]
 
+print('电脑手牌: ' + ' '.join(computer))
 print('玩家手牌: ' + ' '.join(player))
 
 input()
@@ -21,6 +22,3 @@ print('转牌: ' + ' '.join(community[:4]))
 
 input()
 print('河牌: ' + ' '.join(community[:5]))
-
-input()
-print('电脑手牌: ' + ' '.join(computer))
