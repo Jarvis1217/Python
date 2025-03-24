@@ -7,10 +7,16 @@ def main():
     pygame.init()
     pygame.mixer.init()
 
-    # 数字到摩斯密码的映射
+    # 数字和小写字母到摩斯密码的映射
     morse_code = {
         '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
-        '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.'
+        '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+        'a': '.-', 'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.', 
+        'f': '..-.', 'g': '--.', 'h': '....', 'i': '..', 'j': '.---',
+        'k': '-.-', 'l': '.-..', 'm': '--', 'n': '-.', 'o': '---',
+        'p': '.--.', 'q': '--.-', 'r': '.-.', 's': '...', 't': '-',
+        'u': '..-', 'v': '...-', 'w': '.--', 'x': '-..-', 'y': '-.--',
+        'z': '--..'
     }
 
     # 设置参数
@@ -39,22 +45,25 @@ def main():
     dash_sound = generate_tone(dash_duration)
 
     # 用户输入
-    user_input = input("请输入数字: ")
+    user_input = input("请输入数字或字母: ")
 
-    # 验证输入是否只包含数字
-    if not user_input.isdigit():
-        print("请只输入数字!")
+    # 将输入转换为小写
+    user_input = user_input.lower()
+
+    # 验证输入是否只包含数字或小写字母
+    if not all(char.isdigit() or ('a' <= char <= 'z') for char in user_input):
+        print("请只输入数字或字母!")
         return
 
-    print(f"播放数字 '{user_input}' 的摩斯密码")
+    print(f"播放 '{user_input}' 的摩斯密码")
 
-    # 遍历每个数字
-    for i, digit in enumerate(user_input):
-        if digit in morse_code:
-            morse = morse_code[digit]
-            print(f"数字 {digit} 的摩斯密码: {morse}")
+    # 遍历每个字符
+    for i, char in enumerate(user_input):
+        if char in morse_code:
+            morse = morse_code[char]
+            print(f"字符 {char} 的摩斯密码: {morse}")
 
-            # 播放该数字的摩斯密码
+            # 播放该字符的摩斯密码
             for symbol in morse:
                 if symbol == '.':
                     # 播放短音
@@ -68,9 +77,9 @@ def main():
                 # 符号间隔
                 pygame.time.wait(int(symbol_space * 1000))
 
-            # 如果不是最后一个数字，加上字母间隔
+            # 如果不是最后一个字符，加上字母间隔
             if i < len(user_input) - 1:
-                pygame.time.wait(int(letter_space * 1000))
+                pygame.time.wait(int(letter_space * 3000))
 
     # 退出pygame
     pygame.quit()
