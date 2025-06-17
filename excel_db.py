@@ -1,7 +1,6 @@
 import re
 import openpyxl
 from textwrap import dedent
-from openpyxl.utils import get_column_letter
 
 class ExcelDB:
     def __init__(self, filename='database.xlsx'):
