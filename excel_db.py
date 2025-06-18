@@ -9,6 +9,8 @@ class ExcelDB:
             self.wb = openpyxl.load_workbook(filename)
         except FileNotFoundError:
             self.wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "db_init"
 
         self.save()
 
