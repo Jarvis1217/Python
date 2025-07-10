@@ -1,3 +1,9 @@
+"""
+pip install oracledb
+pip install faker
+pip install pycryptodome
+"""
+
 import oracledb
 import random
 import string
