@@ -19,7 +19,7 @@ class OracleDB:
         self,
         dsn: str = "10.10.0.111:1521/ORCL",
         user: str = "test_user",
-        password: str = "test_pass",
+        password: str = "test_user",
         sql_file: str | Path = DEFAULT_SQL_FILE
     ):
         # 1. 初始化连接
@@ -30,7 +30,8 @@ class OracleDB:
 
         # 2. 读取 SQL 文件
         with open(sql_file, "r", encoding="utf-8") as f:
-            self._sql_dict: Dict[str, str] = yaml.safe_load(f)
+            data: Dict[str, str] = yaml.safe_load(f)
+            self._sql_dict: Dict[str, str] = data if data is not None else {}
 
     # ---------- 私有工具方法 ------------------------------------------------
     @staticmethod
@@ -68,10 +69,12 @@ class OracleDB:
         返回受影响行数
         """
         sql = self._convert_placeholders(self._get_sql(sql_or_key))
-        self._cursor.execute(sql, params)
-        self._conn.commit()
-        return self._cursor.rowcount
 
+        with self._conn:  # 自动处理提交/回滚
+            self._cursor.execute(sql, params)
+
+        return self._cursor.rowcount
+        
     def fetch_one(self, sql_or_key: str, params: Sequence[Any] = ()) -> Dict[str, Any]:
         """
         查询一行，返回 dict；若无数据则返回 {}
