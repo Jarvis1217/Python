@@ -73,10 +73,7 @@ def handle_bullets():
             if enemy['x'] < bullet[0] < enemy['x'] + enemy_width and \
                     enemy['y'] < bullet[1] < enemy['y'] + enemy_height:
                 bullets.remove(bullet)
-                enemy['health'] -= 1
-                if enemy['health'] <= 0:
-                    enemies.remove(enemy)
-                break
+                enemies.remove(enemy)
 
 def spawn_enemy():
     global spawn_timer
@@ -84,8 +81,7 @@ def spawn_enemy():
     if spawn_timer >= spawn_delay:
         spawn_timer = 0
         enemy_y = random.randint(0, WINDOW_HEIGHT - enemy_height)
-        enemy_health = random.randint(1, 5)
-        enemies.append({'x': WINDOW_WIDTH, 'y': enemy_y, 'health': enemy_health})
+        enemies.append({'x': WINDOW_WIDTH, 'y': enemy_y})
 
 def move_enemies():
     global enemies
@@ -130,10 +126,6 @@ while running:
     # 绘制敌人
     for enemy in enemies:
         pygame.draw.rect(screen, RED, (enemy['x'], enemy['y'], enemy_width, enemy_height))
-        # 显示血量
-        font = pygame.font.Font(None, 24)
-        health_text = font.render(str(enemy['health']), True, WHITE)
-        screen.blit(health_text, (enemy['x'] + enemy_width // 3, enemy['y'] + enemy_height // 3))
 
     # 更新屏幕
     pygame.display.flip()
