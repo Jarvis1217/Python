@@ -255,7 +255,7 @@ class App(tk.Tk):
         win.title("prompt_generator")
         win.geometry("520x480")
 
-        # 关闭新窗口时，退出整个应用
+        # 关闭新窗口
         def on_close():
             win.destroy()
         win.protocol("WM_DELETE_WINDOW", on_close)
