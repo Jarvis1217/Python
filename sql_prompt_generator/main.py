@@ -257,7 +257,7 @@ class App(tk.Tk):
 
         # 关闭新窗口时，退出整个应用
         def on_close():
-            self.destroy()
+            win.destroy()
         win.protocol("WM_DELETE_WINDOW", on_close)
 
         # 容器布局：上文本区（权重1）、按钮区（权重0）、下文本区（权重1）
@@ -321,10 +321,7 @@ class App(tk.Tk):
             output_text.see("1.0")
 
         gen_btn.config(command=on_generate)
-
-        # 隐藏主窗口，实现“跳转”
-        self.withdraw()
-
+        
     # Windows: 文本区滚轮绑定（进入时绑定，离开时解绑），并确保不影响左侧列表
     def _bind_text_mousewheel_win(self, _event=None):
         # 进入文本区时，确保左侧列表不再截获滚轮
