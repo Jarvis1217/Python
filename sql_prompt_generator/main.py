@@ -253,7 +253,7 @@ class App(tk.Tk):
 
         win = tk.Toplevel(self)
         win.title("prompt_generator")
-        win.geometry("1000x600")
+        win.geometry("520x480")
 
         # 关闭新窗口时，退出整个应用
         def on_close():
