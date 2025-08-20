@@ -10,8 +10,8 @@ class DB:
     # 数据库连接池配置
     DB_POOLS = {
         "test_db_1": "test_db_1_dsn",
-	"test_db_2": "test_db_2_dsn",
-	"test_db_3": "test_db_3_dsn",
+		"test_db_2": "test_db_2_dsn",
+		"test_db_3": "test_db_3_dsn",
     }
 
     # 当前数据库选择
