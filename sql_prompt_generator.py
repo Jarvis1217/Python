@@ -1,7 +1,112 @@
 import json
 import tkinter as tk
 from tkinter import ttk, messagebox
-import db_util as db
+import oracledb
+
+# oracle 初始化
+oracledb.init_oracle_client()
+
+class DB:
+    # 数据库连接池配置
+    DB_POOLS = {
+        "test_db_1": "test_db_1_dsn",
+	"test_db_2": "test_db_2_dsn",
+	"test_db_3": "test_db_3_dsn",
+    }
+
+    # 当前数据库选择
+    DB_CHOICE = ""
+
+    # 已选择的表结构 JSON 列表
+    TABLES = []
+
+    # 数据库连接信息（会在选择数据库时被更新）
+    DSN = DB_POOLS.get(DB_CHOICE)
+    USER = DB_CHOICE
+    PASSWORD = DB_CHOICE
+
+    # 查询所有表及表注释
+    SQL_TABLES = """
+        SELECT TABLE_NAME, COMMENTS AS TABLE_COMMENT
+          FROM USER_TAB_COMMENTS
+         WHERE TABLE_TYPE = 'TABLE'
+           AND TABLE_NAME NOT LIKE 'BIN$%'
+         ORDER BY TABLE_NAME
+    """
+
+    # 查询表注释
+    SQL_TABLE_COMMENT = """
+        SELECT table_name, comments
+          FROM all_tab_comments
+         WHERE owner = SYS_CONTEXT('USERENV','CURRENT_SCHEMA')
+           AND table_name = :tn
+    """
+
+    # 查询字段名、类型及注释
+    SQL_COLUMNS = """
+        SELECT a.column_name,
+               a.data_type ||
+               CASE
+                   WHEN a.data_type = 'NUMBER' AND a.data_precision IS NOT NULL AND a.data_scale IS NOT NULL THEN
+                    '(' || a.data_precision || ',' || a.data_scale || ')'
+                   WHEN a.data_type = 'NUMBER' AND a.data_precision IS NOT NULL AND a.data_scale IS NULL THEN
+                    '(' || a.data_precision || ')'
+                   WHEN a.data_type IN ('CHAR', 'VARCHAR2') THEN
+                    '(' || a.data_length || ')'
+                   ELSE
+                    ''
+               END AS data_type_desc,
+               b.comments
+          FROM all_tab_columns a
+          LEFT JOIN all_col_comments b
+            ON a.owner = b.owner
+           AND a.table_name = b.table_name
+           AND a.column_name = b.column_name
+         WHERE a.owner = SYS_CONTEXT('USERENV','CURRENT_SCHEMA')
+           AND a.table_name = :tn
+         ORDER BY a.column_id
+    """
+
+    @staticmethod
+    def query_all_tables() -> dict:
+        result: dict[str, str] = {}
+
+        with oracledb.connect(user=DB.USER, password=DB.PASSWORD, dsn=DB.DSN) as conn:
+            with conn.cursor() as cur:
+                cur.execute(DB.SQL_TABLES)
+                for table_name, comment in cur:
+                    result[table_name] = comment or ""
+
+        return result
+
+    @staticmethod
+    def get_table_structure(table_name: str) -> str:
+        tn = table_name.upper()
+
+        result = {
+            tn: "",
+            "COLUMNS": {}
+        }
+
+        with oracledb.connect(user=DB.USER, password=DB.PASSWORD, dsn=DB.DSN) as conn:
+            with conn.cursor() as cur:
+                # 查询并组装表名
+                cur.execute(DB.SQL_TABLE_COMMENT, tn=tn)
+                row = cur.fetchone()
+                if not row:
+                    raise ValueError(f"Table '{tn}' not found in current schema.")
+
+                result[tn] = row[1]
+
+                # 查询并组装列信息
+                cur.execute(DB.SQL_COLUMNS, tn=tn)
+                columns = {}
+                for col_name, type_desc, comment in cur:
+                    columns[col_name] = [type_desc, comment or ""]
+                result["COLUMNS"] = columns
+
+        # 返回 JSON 字符串
+        return json.dumps(result, ensure_ascii=False)
 
 
 class ScrollableFrame(ttk.Frame):
@@ -101,7 +206,7 @@ class App(tk.Tk):
             top,
             state="readonly",
             textvariable=self.db_var,
-            values=list(db.DB_POOLS.keys())
+            values=list(DB.DB_POOLS.keys())
         )
         self.db_combo.pack(side="left", fill="x", expand=True, padx=(8, 0))
         self.db_combo.bind("<<ComboboxSelected>>", self.on_db_selected)
@@ -154,11 +259,11 @@ class App(tk.Tk):
         if not selected:
             return
 
-        # 同步写回 prompt_generator 的全局变量
-        db.DB_CHOICE = selected
-        db.DSN = db.DB_POOLS.get(selected)
-        db.USER = selected
-        db.PASSWORD = selected
+        # 同步写回 DB 的全局变量
+        DB.DB_CHOICE = selected
+        DB.DSN = DB.DB_POOLS.get(selected)
+        DB.USER = selected
+        DB.PASSWORD = selected
 
         # 加载该库的所有表
         self.load_tables()
@@ -174,7 +279,7 @@ class App(tk.Tk):
         self.update_idletasks()
 
         try:
-            tables = db.query_all_tables()  # {table_name: comment}
+            tables = DB.query_all_tables()  # {table_name: comment}
         except Exception as e:
             messagebox.showerror("错误", f"加载表清单失败：\n{e}")
             self.status_var.set("加载失败")
@@ -214,12 +319,12 @@ class App(tk.Tk):
     # 事件：勾选表时，添加 JSON 到 TABLES 列表
     def on_table_checked(self, table_name: str, var: tk.IntVar):
         try:
-            json_str = db.get_table_structure(table_name)
+            json_str = DB.get_table_structure(table_name)
             if var.get() == 1:
-                if json_str not in db.TABLES:
-                    db.TABLES.append(json_str)
+                if json_str not in DB.TABLES:
+                    DB.TABLES.append(json_str)
             if var.get() == 0:
-                db.TABLES.remove(json_str)
+                DB.TABLES.remove(json_str)
         except Exception as e:
             # 出错则回退勾选状态
             var.set(0)
@@ -228,7 +333,7 @@ class App(tk.Tk):
     # 事件：查看某表结构，右侧文本区显示格式化 JSON
     def on_view_table(self, table_name: str):
         try:
-            raw = db.get_table_structure(table_name)
+            raw = DB.get_table_structure(table_name)
             try:
                 obj = json.loads(raw)
                 pretty = json.dumps(obj, ensure_ascii=False, indent=2)
@@ -311,7 +416,7 @@ class App(tk.Tk):
         # 点击“生成”的处理逻辑
         def on_generate():
             user_input = input_text.get("1.0", "end-1c")
-            tables_str = "\n".join(db.TABLES)
+            tables_str = "\n".join(DB.TABLES)
             # 按要求拼接字符串
             result = f"{tables_str}\n请参考以上数据库表结构的json描述，实现一段sql语句：{user_input}"
 
@@ -321,7 +426,7 @@ class App(tk.Tk):
             output_text.see("1.0")
 
         gen_btn.config(command=on_generate)
-        
+
     # Windows: 文本区滚轮绑定（进入时绑定，离开时解绑），并确保不影响左侧列表
     def _bind_text_mousewheel_win(self, _event=None):
         # 进入文本区时，确保左侧列表不再截获滚轮
