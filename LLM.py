@@ -5,6 +5,7 @@ client = OpenAI(api_key="<API_KEY>", base_url="https://api.deepseek.com")
 
 messages = []
 
+# 获取回复
 def get_response(prompt):
     messages.append({"role": "user", "content": prompt})
 
@@ -31,11 +32,27 @@ def get_response(prompt):
             print(content, end="", flush=True)
             content_buffer.append(content)
 
-    print()
+    print("\n")
     messages.append({"role": "assistant", "content": "".join(content_buffer)})
 
+# 保存记录
+def save_to_md(file_name):
+    with open(file_name, "w", encoding="utf-8") as md_file:
+        for message in messages:
+            role = message.get("role", "unknown")
+            content = message.get("content", "")
+            
+            # 写入角色和内容
+            md_file.write(f"## {role.capitalize()}\n\n")
+            md_file.write(f"{content}\n\n")
+            md_file.write("---\n\n")
+    print(f"已保存：{file_name}\n")
+
 if __name__ == "__main__":
-    prompt = """
-    详细的介绍以下你自己，包括但不限于你的模型版本、知识库截止日期等。
-    """
-    get_response(dedent(prompt).strip())
+    while True:
+        prompt = input("> ")
+        if "save" in prompt:
+            file_name = prompt.split(" ")[1]
+            save_to_md(file_name)
+        else:
+            get_response(prompt)
