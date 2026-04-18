@@ -320,12 +320,12 @@ def main():
     # 发公共牌
     community = [deck.pop() for _ in range(5)]
 
+    print("玩家手牌:", " ".join(format_card(c) for c in player))
+    print("电脑手牌:", " ".join(format_card(c) for c in computer), "\n")
+
     print("公共牌:", " ".join(format_card(c) for c in community), "\n")
 
-    print("玩家手牌:", " ".join(format_card(c) for c in player))
-    print(f"玩家：{best_poker_hand_with_cards(player, community)}", "\n")
-
-    print("电脑手牌:", " ".join(format_card(c) for c in computer))
+    print(f"玩家：{best_poker_hand_with_cards(player, community)}")
     print(f"电脑：{best_poker_hand_with_cards(computer, community)}", "\n")
     
     # 输出最终胜负结果
