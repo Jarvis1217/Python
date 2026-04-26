@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from typing import Any, Dict, List, Optional
 
-SAVE_PATH = r"C:\Users\Jerry\AppData\Roaming\SlayTheSpire2\steam\76561198828316918\profile1\saves\current_run.save"
+SAVE_PATH = r"<SAVE_PATH>"
 
 
 class SaveFileError(Exception):
