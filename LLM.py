@@ -1,7 +1,7 @@
 from openai import OpenAI
 from textwrap import dedent
 
-client = OpenAI(api_key="<API_KEY>", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="<API_KEY", base_url="https://api.deepseek.com")
 
 messages = []
 
@@ -10,9 +10,11 @@ def get_response(prompt):
     messages.append({"role": "user", "content": prompt})
 
     response = client.chat.completions.create(
-        model="deepseek-reasoner",
+        model="deepseek-v4-pro",
         messages=messages,
-        stream=True
+        stream=True,
+        reasoning_effort="high",
+        extra_body={"thinking": {"type": "enabled"}}
     )
 
     content_buffer, thinking = [], 1
