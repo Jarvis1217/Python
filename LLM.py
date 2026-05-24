@@ -1,7 +1,7 @@
 from openai import OpenAI
 from textwrap import dedent
 
-client = OpenAI(api_key="<API_KEY", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="<API_KEY>", base_url="https://api.deepseek.com")
 
 messages = []
 
