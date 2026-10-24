@@ -1,56 +1,55 @@
-import itertools
 import random
+from fractions import Fraction
 
 
-def Give_num():
-    li = [random.randint(1, 9) for i in range(4)]
-    return li
+def solve24(nums):
+    """返回所有能算出 24 的表达式（字符串集合）"""
+    results = set()
+
+    def helper(items):
+        if len(items) == 1:
+            if items[0][0] == 24:
+                results.add(items[0][1])
+            return
+        for i in range(len(items)):
+            for j in range(i + 1, len(items)):
+                a, ea = items[i]
+                b, eb = items[j]
+                rest = [items[k] for k in range(len(items)) if k != i and k != j]
+                cands = [
+                    (a + b, f"({ea}+{eb})"),
+                    (a * b, f"({ea}*{eb})"),
+                    (a - b, f"({ea}-{eb})"),
+                    (b - a, f"({eb}-{ea})"),
+                ]
+                if b != 0:
+                    cands.append((a / b, f"({ea}/{eb})"))
+                if a != 0:
+                    cands.append((b / a, f"({eb}/{ea})"))
+                for val, expr in cands:
+                    helper(rest + [(val, expr)])
+
+    helper([(Fraction(x), str(x)) for x in nums])
+    return results
 
 
-def st(num_list):
-    li = [str(i) for i in num_list]
-    return li
+def main():
+    # 反复随机，直到生成的四个数一定有解
+    while True:
+        nums = [random.randint(1, 9) for _ in range(4)]
+        sols = solve24(nums)
+        if sols:
+            break
+
+    print(f"随机生成的四个数字：{nums}")
+    input("按回车键查看答案...")
+
+    # 去掉最外层括号，去重后排序
+    shown = sorted({s[1:-1] for s in sols})
+    print(f"共找到 {len(shown)} 个不同答案：")
+    for idx, s in enumerate(shown, 1):
+        print(f"{idx}. {s} = 24")
 
 
-def calc_24(li):
-    result = []
-    symbols = ["+", "-", "*", "/"]
-    for li in itertools.permutations(li, 4):
-        for op in itertools.product(symbols, repeat=4):
-            # 1.((A*B)*C)*D
-            n1 = '(' + '(' + li[0] + op[0] + li[1] + ')' + op[1] + li[2] + ')' + op[2] + li[3]
-            # 2.(A*(B*C))*D
-            n2 = '(' + li[0] + op[0] + '(' + li[1] + op[1] + li[2] + ')' + ')' + op[2] + li[3]
-            # 3.(A*B)*(C*D)
-            n3 = '(' + li[0] + op[0] + li[1] + ')' + op[1] + '(' + li[2] + op[2] + li[3] + ')'
-            # 4.A*(B*(C*D))
-            n4 = li[0] + op[0] + '(' + li[1] + op[1] + '(' + li[2] + op[2] + li[3] + ')' + ')'
-            # 5.A*((B*C)*D)
-            n5 = li[0] + op[0] + '(' + '(' + li[1] + op[1] + li[2] + ')' + op[2] + li[3] + ')'
-
-            try:
-                if eval(n1) == 24:
-                    result.append(n1)
-                if eval(n2) == 24:
-                    result.append(n2)
-                if eval(n3) == 24:
-                    result.append(n3)
-                if eval(n4) == 24:
-                    result.append(n4)
-                if eval(n4) == 24:
-                    result.append(n5)
-            except ZeroDivisionError:
-                pass
-    return result
-
-def Game_play():
-    num_list = Give_num()
-    print('随机数组:%s' % num_list)
-    print('输入‘ans’查看答案...')
-    if input() == 'ans':
-        num_list = st(num_list)
-        res = calc_24(num_list)
-        if not res:
-            print('未能找到答案')
-        else:
-            print(res[0])
+if __name__ == "__main__":
+    main()
